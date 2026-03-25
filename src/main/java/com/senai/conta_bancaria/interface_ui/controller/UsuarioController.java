@@ -1,9 +1,9 @@
 package com.senai.conta_bancaria.interface_ui.controller;
 
+import com.senai.conta_bancaria.application.dto.UsuarioReponseDTO;
+import com.senai.conta_bancaria.application.dto.UsuarioRequestDTO;
 import com.senai.conta_bancaria.application.service.UsuarioService;
-import com.senai.conta_bancaria.domain.entity.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,26 +18,26 @@ public class UsuarioController {
     UsuarioService usuarioService;
 
     @PostMapping
-    public ResponseEntity<Usuario> cadastrarUsuario(@RequestBody Usuario usuario){
-        Usuario usuarioCadastrado = usuarioService.cadastrarUsuario(usuario);
+    public ResponseEntity<UsuarioReponseDTO> cadastrarUsuario(@RequestBody UsuarioRequestDTO usuarioRequestDTO){
+        UsuarioReponseDTO usuarioCadastrado = usuarioService.cadastrarUsuario(usuarioRequestDTO);
         return ResponseEntity.created(
-                URI.create("usuario/"+usuarioCadastrado.getId())
-                ).body(usuarioService.cadastrarUsuario(usuarioCadastrado));
+                URI.create("/usuario"+usuarioCadastrado.id())
+                ).body(usuarioCadastrado);
     }
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> listarUsuario(){
+    public ResponseEntity<List<UsuarioReponseDTO>> listarUsuario(){
         return ResponseEntity.ok(usuarioService.listarUsuarios());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarUsuarioPorId(@PathVariable Long id){
+    public ResponseEntity<UsuarioReponseDTO> buscarUsuarioPorId(@PathVariable Long id){
         return ResponseEntity.ok(usuarioService.buscarUsuarioPorId(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario){
-        return ResponseEntity.ok(usuarioService.atualizarUsuario(id, usuario));
+    public ResponseEntity<UsuarioReponseDTO> atualizarUsuario(@PathVariable Long id, @RequestBody UsuarioRequestDTO usuarioRequestDTO){
+        return ResponseEntity.ok(usuarioService.atualizarUsuario(id, usuarioRequestDTO));
     }
 
     @DeleteMapping("/{id}")
