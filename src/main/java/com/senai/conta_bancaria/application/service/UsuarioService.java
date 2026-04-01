@@ -1,8 +1,9 @@
 package com.senai.conta_bancaria.application.service;
 
-import com.senai.conta_bancaria.application.dto.UsuarioReponseDTO;
+import com.senai.conta_bancaria.application.dto.UsuarioResponseDTO;
 import com.senai.conta_bancaria.application.dto.UsuarioRequestDTO;
 import com.senai.conta_bancaria.domain.entity.Usuario;
+import com.senai.conta_bancaria.domain.exception.notFoundException;
 import com.senai.conta_bancaria.domain.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,35 +16,40 @@ public class UsuarioService {
     @Autowired
     UsuarioRepository usuarioRepository;
 
-    public UsuarioReponseDTO cadastrarUsuario(UsuarioRequestDTO usuarioRequestDTO) {
+    public UsuarioResponseDTO cadastrarUsuario(UsuarioRequestDTO usuarioRequestDTO) {
 
-        return UsuarioReponseDTO.fromEntity(
+        return UsuarioResponseDTO.fromEntity(
                 usuarioRepository.save(
                         usuarioRequestDTO.toEntity()));
     }
 
-    public List<UsuarioReponseDTO> listarUsuarios() {
+    public List<UsuarioResponseDTO> listarUsuarios() {
         return usuarioRepository.findAll().stream().map(
-                   UsuarioReponseDTO::fromEntity
+                   UsuarioResponseDTO::fromEntity
         ).toList();
     }
 
-    public UsuarioReponseDTO buscarUsuarioPorId(Long id) {
-        return UsuarioReponseDTO.fromEntity(usuarioRepository.findById(id).get());
+    public UsuarioResponseDTO buscarUsuarioPorId(Long id) {
+        return UsuarioResponseDTO.fromEntity(usuarioRepository.findById(id)
+                .orElseThrow(() -> new notFoundException(id)));
+
     }
 
 
-    public UsuarioReponseDTO atualizarUsuario(Long id, UsuarioRequestDTO usuarioRequestDTO) {
-        Usuario usuarioAtualizado = usuarioRepository.findById(id).get();
+    public UsuarioResponseDTO atualizarUsuario(Long id, UsuarioRequestDTO usuarioRequestDTO) {
+        Usuario usuarioAtualizado = usuarioRepository.findById(id).orElseThrow(() -> new notFoundException(id));
 
             usuarioAtualizado.setNome(usuarioRequestDTO.nome());
             usuarioAtualizado.setEmail(usuarioRequestDTO.email());
             usuarioAtualizado.setSenha(usuarioRequestDTO.senha());
 
-            return UsuarioReponseDTO.fromEntity(usuarioRepository.save(usuarioAtualizado));
+            return UsuarioResponseDTO.fromEntity(usuarioRepository.save(usuarioAtualizado));
     }
 
     public void deleteUsuario(Long id) {
+        if (!usuarioRepository.existsById(id)){
+            throw  new notFoundException(id);
+        }
         usuarioRepository.deleteById(id);
     }
 }
