@@ -1,6 +1,6 @@
 package com.senai.conta_bancaria.interface_ui.exception;
 
-import com.senai.conta_bancaria.domain.exception.notFoundException;
+import com.senai.conta_bancaria.domain.exception.UsuarioNaoEncontradoException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -13,16 +13,15 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.senai.conta_bancaria.interface_ui.exception.ProblemDetailsUtils.buildProblem;
+import static com.senai.conta_bancaria.interface_ui.exception.ProblemDetailUtils.buildProblem;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
-    @ExceptionHandler(notFoundException.class)
+    @ExceptionHandler(UsuarioNaoEncontradoException.class)
     public ProblemDetail handlerUsuarioNaoEncontradoException(
             HttpServletRequest request,
-            notFoundException ex
+            UsuarioNaoEncontradoException ex
     ) {
         return buildProblem(
                 HttpStatus.NOT_FOUND,
@@ -31,6 +30,7 @@ public class GlobalExceptionHandler {
                 request.getRequestURL().toString()
         ) ;
     }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -65,4 +65,6 @@ public class GlobalExceptionHandler {
         problem.setProperty("errors", errors);
         return problem;
     }
+
+
 }

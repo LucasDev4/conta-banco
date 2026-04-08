@@ -1,9 +1,10 @@
 package com.senai.conta_bancaria.interface_ui.controller;
 
 
-import com.senai.conta_bancaria.application.dto.UsuarioResponseDTO;
 import com.senai.conta_bancaria.application.dto.UsuarioRequestDTO;
+import com.senai.conta_bancaria.application.dto.UsuarioResponseDTO;
 import com.senai.conta_bancaria.application.service.UsuarioService;
+import com.senai.conta_bancaria.domain.entity.Usuario;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,7 +92,7 @@ public class UsuarioController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
-        usuarioService.deleteUsuario(id);
+        usuarioService.deletarUsuario(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,14 +1,15 @@
 package com.senai.conta_bancaria.application.service;
 
-import com.senai.conta_bancaria.application.dto.UsuarioResponseDTO;
 import com.senai.conta_bancaria.application.dto.UsuarioRequestDTO;
+import com.senai.conta_bancaria.application.dto.UsuarioResponseDTO;
 import com.senai.conta_bancaria.domain.entity.Usuario;
-import com.senai.conta_bancaria.domain.exception.notFoundException;
+import com.senai.conta_bancaria.domain.exception.UsuarioNaoEncontradoException;
 import com.senai.conta_bancaria.domain.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 @Service
 public class UsuarioService {
@@ -20,35 +21,40 @@ public class UsuarioService {
 
         return UsuarioResponseDTO.fromEntity(
                 usuarioRepository.save(
-                        usuarioRequestDTO.toEntity()));
+                        usuarioRequestDTO.toEntity()
+                )
+        );
     }
 
     public List<UsuarioResponseDTO> listarUsuarios() {
-        return usuarioRepository.findAll().stream().map(
-                   UsuarioResponseDTO::fromEntity
-        ).toList();
+        return usuarioRepository.findAll()
+                .stream().map(
+                        UsuarioResponseDTO::fromEntity
+                ).toList();
     }
 
     public UsuarioResponseDTO buscarUsuarioPorId(Long id) {
+
         return UsuarioResponseDTO.fromEntity(usuarioRepository.findById(id)
-                .orElseThrow(() -> new notFoundException(id)));
-
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(id))
+        );
     }
-
 
     public UsuarioResponseDTO atualizarUsuario(Long id, UsuarioRequestDTO usuarioRequestDTO) {
-        Usuario usuarioAtualizado = usuarioRepository.findById(id).orElseThrow(() -> new notFoundException(id));
+        Usuario usuarioAtualizado = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(id));
 
-            usuarioAtualizado.setNome(usuarioRequestDTO.nome());
-            usuarioAtualizado.setEmail(usuarioRequestDTO.email());
-            usuarioAtualizado.setSenha(usuarioRequestDTO.senha());
+        usuarioAtualizado.setNome(usuarioRequestDTO.nome());
+        usuarioAtualizado.setEmail(usuarioRequestDTO.email());
+        usuarioAtualizado.setSenha(usuarioRequestDTO.senha());
 
-            return UsuarioResponseDTO.fromEntity(usuarioRepository.save(usuarioAtualizado));
+        return UsuarioResponseDTO.fromEntity(usuarioRepository.save(usuarioAtualizado));
     }
 
-    public void deleteUsuario(Long id) {
-        if (!usuarioRepository.existsById(id)){
-            throw  new notFoundException(id);
+    public void deletarUsuario(Long id) {
+
+        if(!usuarioRepository.existsById(id)){
+            throw new UsuarioNaoEncontradoException(id);
         }
         usuarioRepository.deleteById(id);
     }
