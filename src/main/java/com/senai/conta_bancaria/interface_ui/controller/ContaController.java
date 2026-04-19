@@ -2,6 +2,7 @@ package com.senai.conta_bancaria.interface_ui.controller;
 
 import com.senai.conta_bancaria.application.dto.ContaRequestDTO;
 import com.senai.conta_bancaria.application.dto.ContaResponseDTO;
+import com.senai.conta_bancaria.application.dto.DepositoDTO;
 import com.senai.conta_bancaria.application.dto.SaqueDTO;
 import com.senai.conta_bancaria.application.service.ContaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -88,8 +89,15 @@ public class ContaController {
         contaService.deletarUsuario(id);
         return ResponseEntity.noContent().build();
     }
+
     @PostMapping("/saque")
     public ResponseEntity<ContaResponseDTO> sacar(@RequestBody SaqueDTO saqueDTO) {
         return ResponseEntity.ok(contaService.sacar(saqueDTO));
     }
+
+    @PostMapping("/deposito")
+    public ResponseEntity<ContaResponseDTO> deposito(@RequestBody DepositoDTO depositoDTO) {
+        return ResponseEntity.ok(contaService.deposito(depositoDTO));
+    }
+
 }

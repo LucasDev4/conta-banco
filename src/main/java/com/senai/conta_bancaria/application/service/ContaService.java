@@ -2,6 +2,7 @@ package com.senai.conta_bancaria.application.service;
 
 import com.senai.conta_bancaria.application.dto.ContaRequestDTO;
 import com.senai.conta_bancaria.application.dto.ContaResponseDTO;
+import com.senai.conta_bancaria.application.dto.DepositoDTO;
 import com.senai.conta_bancaria.application.dto.SaqueDTO;
 import com.senai.conta_bancaria.domain.entity.Conta;
 import com.senai.conta_bancaria.domain.exception.UsuarioNaoEncontradoException;
@@ -68,6 +69,7 @@ public class ContaService {
             throw new RuntimeException("Conta inativa");
         }
 
+
         if (saqueDTO.valor() <= 0) {
             throw new RuntimeException("Valor inválido para saque");
         }
@@ -79,5 +81,21 @@ public class ContaService {
         conta.setSaldo(conta.getSaldo() - saqueDTO.valor());
 
         return ContaResponseDTO.fromEntity(contaRepository.save(conta));
+    }
+
+    public ContaResponseDTO deposito(DepositoDTO depositoDTO){
+        Conta conta = contaRepository.findById((depositoDTO.contaId()))
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(depositoDTO.contaId()));
+
+        if (!conta.isAtivo()){
+            throw  new RuntimeException("Conta não está ativa mano");
+        }
+        if (conta.getSaldo() < depositoDTO.valor()){
+            throw  new RuntimeException("Saldo insuficiente");
+        }
+        conta.setSaldo(conta.getSaldo() + depositoDTO.valor());
+
+        return ContaResponseDTO.fromEntity(contaRepository.save(conta));
+
     }
 }
