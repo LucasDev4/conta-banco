@@ -1,12 +1,10 @@
 package com.senai.conta_bancaria.application.service;
 
-import com.senai.conta_bancaria.application.dto.ContaRequestDTO;
-import com.senai.conta_bancaria.application.dto.ContaResponseDTO;
-import com.senai.conta_bancaria.application.dto.DepositoDTO;
-import com.senai.conta_bancaria.application.dto.SaqueDTO;
+import com.senai.conta_bancaria.application.dto.*;
 import com.senai.conta_bancaria.domain.entity.Conta;
 import com.senai.conta_bancaria.domain.exception.UsuarioNaoEncontradoException;
 import com.senai.conta_bancaria.domain.repository.ContaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -96,6 +94,36 @@ public class ContaService {
         conta.setSaldo(conta.getSaldo() + depositoDTO.valor());
 
         return ContaResponseDTO.fromEntity(contaRepository.save(conta));
-
     }
+
+    @Transactional
+    public TransferenciaResponseDTO transferencia(TransferenciaDTO transferenciaDTO){
+        Conta contaSaque = contaRepository.findById((transferenciaDTO.saqueId()))
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(transferenciaDTO.saqueId()));
+
+        Conta contaDeposito = contaRepository.findById((transferenciaDTO.depositoId()))
+                .orElseThrow(() -> new UsuarioNaoEncontradoException(transferenciaDTO.depositoId()));
+
+        if (contaSaque.getSaldo() < transferenciaDTO.valorTransferencia()){
+            throw new RuntimeException("Saldo insuficiente da conta de origem");
+        }
+
+        if (contaSaque.getId().equals(contaDeposito.getId())){
+            throw new RuntimeException("Não pode fazer transferencia para a mesma conta");
+        }
+
+        if (!contaSaque.isAtivo() || !contaDeposito.isAtivo()){
+            throw  new RuntimeException("Conta não está ativa mano");
+        }
+
+        contaSaque.setSaldo(contaSaque.getSaldo() - transferenciaDTO.valorTransferencia());
+        contaDeposito.setSaldo(contaDeposito.getSaldo() + transferenciaDTO.valorTransferencia());
+
+        return TransferenciaResponseDTO.fromEntity(
+                contaSaque,
+                contaDeposito,
+                transferenciaDTO.valorTransferencia()
+        );
+    }
+
 }

@@ -1,10 +1,8 @@
 package com.senai.conta_bancaria.interface_ui.controller;
 
-import com.senai.conta_bancaria.application.dto.ContaRequestDTO;
-import com.senai.conta_bancaria.application.dto.ContaResponseDTO;
-import com.senai.conta_bancaria.application.dto.DepositoDTO;
-import com.senai.conta_bancaria.application.dto.SaqueDTO;
+import com.senai.conta_bancaria.application.dto.*;
 import com.senai.conta_bancaria.application.service.ContaService;
+import com.senai.conta_bancaria.domain.entity.Conta;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -98,6 +96,11 @@ public class ContaController {
     @PostMapping("/deposito")
     public ResponseEntity<ContaResponseDTO> deposito(@RequestBody DepositoDTO depositoDTO) {
         return ResponseEntity.ok(contaService.deposito(depositoDTO));
+    }
+
+    @PostMapping("/transferencia")
+    public ResponseEntity<TransferenciaResponseDTO> transferencia(@RequestBody TransferenciaDTO transferenciaDTO){
+        return ResponseEntity.ok(contaService.transferencia(transferenciaDTO));
     }
 
 }

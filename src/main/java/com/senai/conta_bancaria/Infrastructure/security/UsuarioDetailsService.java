@@ -1,4 +1,4 @@
-package com.senai.conta_bancaria.infrastructure.security;
+package com.senai.conta_bancaria.Infrastructure.security;
 
 import com.senai.conta_bancaria.domain.exception.UsuarioNaoEncontradoException;
 import com.senai.conta_bancaria.domain.repository.UsuarioRepository;

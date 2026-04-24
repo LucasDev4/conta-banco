@@ -1,4 +1,4 @@
-package com.senai.conta_bancaria.infrastructure.security;
+package com.senai.conta_bancaria.Infrastructure.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
